@@ -357,16 +357,16 @@ relativo <- function(x){
 series <- function(datos,categoria,colores,titulo,eje){
   fecha <- (datos %>% filter(Variable == categoria)%>% 
               spread(key = Clase, value = Total) %>% 
-              mutate(Fecha = paste(WEEK,SEMESTRE,sep = "-")))$Fecha
+              mutate(Fecha = paste(WEEK,sep = "-")))$Fecha
   datos <- ungroup(datos)
   tba <- datos %>% filter(Variable == categoria) %>%
-    mutate(Fecha = paste(WEEK,SEMESTRE,sep = "-"))
+    mutate(Fecha = paste(WEEK,sep = "-"))
   tba0 <- expand.grid(unique(tba$Fecha),unique(tba$Clase))
   colnames(tba0) <- c("Fecha","Clase")
-  tba0 <- tba0 %>% left_join(tba %>% select(-WEEK,-SEMESTRE,-Variable)) %>% arrange(Fecha)
+  tba0 <- tba0 %>% left_join(tba %>% select(-WEEK,-Variable)) %>% arrange(Fecha)
   tba2 <- datos %>% filter(Variable == categoria) %>% 
     spread(key = Clase, value = Total) %>% 
-    select(-WEEK,-SEMESTRE,-Variable)
+    select(-WEEK,-Variable)
   tba2_nombres <- colnames(tba2)
   tba2 <- tba2 %>% relativo()
   tba2 <- matrix(tba2,ncol=length(tba2_nombres))

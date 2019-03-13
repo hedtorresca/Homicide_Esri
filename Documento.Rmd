@@ -1,0 +1,20 @@
+---
+title: "AnÃ¡lisis exploratorio"
+author: "David Torres"
+date: "12 de marzo de 2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+source("code.R", encoding = 'UTF-8')
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+CAT_AÑO_SERIE1
+```
+
