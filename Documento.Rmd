@@ -1,10 +1,8 @@
 ---
-title: "AnÃ¡lisis exploratorio"
+title: "Análisis exploratorio"
 author: "David Torres"
 date: "12 de marzo de 2019"
-output:
-  pdf_document: default
-  html_document: default
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
