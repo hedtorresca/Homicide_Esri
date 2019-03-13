@@ -11,8 +11,8 @@ source("code.R", encoding = 'UTF-8')
 
 ```
 
-```{r setup, include=FALSE}
+```{r s, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-CAT_AÑO_SERIE1
+CAT_ANO_SERIE1
 ```
 
