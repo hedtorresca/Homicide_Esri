@@ -91,7 +91,7 @@ for(d in homicide$`MUN-DEPT`){
       eje = "Número de homicidios"
     ); serie_global
     
-    saveWidget(serie_global, file = file.path(getwd(),  paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
+    saveWidget(serie_global, file = file.path(getwd(), "municipios", paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
   
 }
 
@@ -151,6 +151,7 @@ serie_global <- series(
   eje = "Número de homicidios"
 ); serie_global
 
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "sexo(semanas).html")  ,  selfcontained = F , libdir = "libraryjs")
 
 
 #### Por años
@@ -171,6 +172,7 @@ serie_global <- series2(
   eje = "Número de homicidios"
 ); serie_global
 
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "sexo (años).html")  ,  selfcontained = F , libdir = "libraryjs")
 
 
 #### Según sea zona rural o urbana
@@ -187,6 +189,8 @@ serie_global <- series2(
   titulo =  "Evolución por semanas del número de homicidios según zona",
   eje = "Número de homicidios"
 ); serie_global
+
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "zona.html")  ,  selfcontained = F , libdir = "libraryjs")
 
 #### Según sea el sitio espeecífico
 
@@ -207,6 +211,8 @@ serie_global <- series2(
   eje = "Número de homicidios"
 ); serie_global
 
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "lugar del crimen.html")  ,  selfcontained = F , libdir = "libraryjs")
+
 #### Según sea el tipo de arma
 
 homicide$ARMA_EMPLEADA[homicide$ARMA_EMPLEADA != "ARMA BLANCA / CORTOPUNZANTE" & homicide$ARMA_EMPLEADA != "ARMA DE FUEGO" & homicide$ARMA_EMPLEADA != "CONTUNDENTES" & homicide$ARMA_EMPLEADA != "MINA ANTIPERSONA" ] = "OTRA"
@@ -222,6 +228,8 @@ serie_global <- series2(
   titulo =  "Evolución por semanas del número de homicidios según zona",
   eje = "Número de homicidios"
 ); serie_global
+
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "arma empleada.html")  ,  selfcontained = F , libdir = "libraryjs")
 
 
 ##### Nacionalidad
@@ -240,4 +248,5 @@ serie_global <- series2(
   eje = "Número de homicidios"
 ); serie_global
 
-homicide$EDAD
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "nacionalidad.html")  ,  selfcontained = F , libdir = "libraryjs")
+
