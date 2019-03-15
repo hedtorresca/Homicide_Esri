@@ -48,7 +48,7 @@ Clases <- function(varc){
 }
 
 DT1 <- Clases("YEAR")
-DT1
+
 CAT_ANO_SERIE1 <- series(
   datos = DT1,
   categoria = "YEAR",
