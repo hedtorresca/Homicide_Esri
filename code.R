@@ -52,12 +52,6 @@ Conteo <- function(varc){
     mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
 }
 
-<<<<<<< HEAD
-DT1 <- Clases("YEAR")
-
-CAT_ANO_SERIE1 <- series(
-  datos = DT1,
-=======
 
 semanas <- Conteo("YEAR")
 
@@ -65,7 +59,6 @@ semanas <- Conteo("YEAR")
 
 serie_global <- series(
   datos = semanas,
->>>>>>> a306d448818699f5d417c68f0940a05039742f2c
   categoria = "YEAR",
   colores = col,
   titulo = "Evolución por semanas del número de homicidios en cada año",
@@ -197,7 +190,7 @@ serie_global <- series2(
 
 #### Según sea el sitio espeecífico
 
-homicide$CLASE_SITIO[homicide$CLASE_SITIO != "ZONA SELVÁTICA" & homicide$CLASE_SITIO != "TIENDA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" ] = "OTRO LUGAR"
+homicide$CLASE_SITIO[homicide$CLASE_SITIO != "RIOS" & homicide$CLASE_SITIO != "FRENTE A RESIDENCIAS   VIA PUBLICA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" & homicide$CLASE_SITIO != "FINCAS Y SIMILARES" & homicide$CLASE_SITIO != "CASAS DE HABITACION" & homicide$CLASE_SITIO != "DENTRO DE LA VIVIENDA" & homicide$CLASE_SITIO != "BARES, CANTINAS Y SIMILARES" & homicide$CLASE_SITIO != "CARRETERAS"] = "OTRO LUGAR"
 
 
 
@@ -247,3 +240,4 @@ serie_global <- series2(
   eje = "Número de homicidios"
 ); serie_global
 
+homicide$EDAD
