@@ -190,7 +190,7 @@ serie_global <- series2(
 
 #### Según sea el sitio espeecífico
 
-homicide$CLASE_SITIO[homicide$CLASE_SITIO != "ZONA SELVÁTICA" & homicide$CLASE_SITIO != "TIENDA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" ] = "OTRO LUGAR"
+homicide$CLASE_SITIO[homicide$CLASE_SITIO != "RIOS" & homicide$CLASE_SITIO != "FRENTE A RESIDENCIAS   VIA PUBLICA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" & homicide$CLASE_SITIO != "FINCAS Y SIMILARES" & homicide$CLASE_SITIO != "CASAS DE HABITACION" & homicide$CLASE_SITIO != "DENTRO DE LA VIVIENDA" & homicide$CLASE_SITIO != "BARES, CANTINAS Y SIMILARES" & homicide$CLASE_SITIO != "CARRETERAS"] = "OTRO LUGAR"
 
 
 
@@ -240,3 +240,4 @@ serie_global <- series2(
   eje = "Número de homicidios"
 ); serie_global
 
+homicide$EDAD
