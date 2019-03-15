@@ -514,6 +514,86 @@ series <- function(datos,categoria,colores,titulo,eje){
   
   return(gfa)
 }
+
+series3 <- function(datos,categoria,colores,titulo,eje){
+  fecha <- (datos %>% filter(Variable == categoria)%>% 
+              spread(key = Clase, value = Total) %>% 
+              mutate(Fecha = paste(MONTH,sep = "-")))$Fecha
+  datos <- ungroup(datos)
+  tba <- datos %>% filter(Variable == categoria) %>%
+    mutate(Fecha = paste(MONTH,sep = "-"))
+  tba0 <- expand.grid(unique(tba$Fecha),unique(tba$Clase))
+  colnames(tba0) <- c("Fecha","Clase")
+  tba0 <- tba0 %>% left_join(tba %>% select(-MONTH,-Variable)) %>% arrange(Fecha)
+  tba2 <- datos %>% filter(Variable == categoria) %>% 
+    spread(key = Clase, value = Total) %>% 
+    select(-MONTH,-Variable)
+  tba2_nombres <- colnames(tba2)
+  tba2 <- tba2 %>% relativo()
+  tba2 <- matrix(tba2,ncol=length(tba2_nombres))
+  tba2 <- data.frame(tba2)
+  colnames(tba2) <- tba2_nombres
+  tba2 <- tba2 %>% 
+    mutate(Fecha=fecha) %>%  
+    gather(key="Clase", value = "Relativo",tba2_nombres)
+  n <- tba %>% select(Clase) %>% distinct() %>% nrow()
+  cat <- tba %>% select(Clase) %>% distinct() %>% arrange(Clase)
+  colo <- as.matrix(colores[1:n],ncol=1)
+  rownames(colo)= cat$Clase
+  tba0 <- tba0 %>% inner_join(tba2)
+  gfa <-  tba0 %>% 
+    hchart( "line", hcaes(x = Fecha, y = Total, group = Clase), color = as.vector(colo), zoomType = list(enabled=FALSE),  resetZoomButton=TRUE)%>% 
+    hc_rangeSelector(inputEnabled = FALSE, enabled=FALSE) %>% 
+    hc_add_theme(hc_theme_elementary()) %>% 
+    hc_chart(zoomType = "x",type = "datetime") %>% 
+    hc_plotOptions(line = list(
+      marker = list( enabled = TRUE, symbol = "square", radius = 1) ))%>%
+    hc_yAxis( lineColor = '#787878', lineWidth = 1, min = 0,
+              title = list(text = eje,  offset = 70,
+                           style = list( fontWeight = "bold",
+                                         fontSize = "18px",
+                                         color = 'black')),
+              opposite = FALSE,
+              labels = list(
+                style = list(
+                  fontWeight = "bold",
+                  color = 'black',
+                  fontSize = '18px'
+                ))
+    ) %>% 
+    hc_xAxis(  lineColor = '#787878', 
+               title = list(text = "mes",  offset = 70, 
+                            style = list( fontWeight = "bold",
+                                          fontSize = "18px",
+                                          color = 'black')),
+               opposite = FALSE,
+               labels = list(
+                 style = list(
+                   fontWeight = "bold",
+                   color = 'black',
+                   fontSize = '18px'
+                 ))
+    ) %>% 
+    hc_title(style = list( fontWeight = "bold", 
+                           fontSize = "22px", 
+                           useHTML = TRUE ), text = titulo) %>%
+    hc_exporting(enabled = TRUE, filename = "export") %>%
+    hc_legend(enabled = TRUE, align = "center",layout = "horizontal",
+              x = 42, y = 0,
+              itemStyle = list(
+                fontWeight = "bold",
+                color = 'black',
+                fontSize = '18px'
+              )) %>%
+    hc_tooltip(crosshairs = TRUE, 
+               pointFormat= '<span style="color:{series.color}">\u25CF </span><b>{series.name}: {point.y}</b> ({point.Relativo}%)<br/>',
+               backgroundColor =  hex_to_rgba("#baaeae", 0.7), 
+               borderColor = "#6d6666", shared = TRUE,
+               borderWidth = 5, useHTML = TRUE) %>%
+    hc_add_theme(hc_theme_flat())
+  
+  return(gfa)
+}
 ############### 3. Construir torta: ###############
 
 torta <- function(datos,variable,colores,titulo,etiqueta,ano,periodo,periodo_titulo){

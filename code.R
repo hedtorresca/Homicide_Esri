@@ -39,10 +39,13 @@ homicide <- read_excel("datasetanual.xlsx",
 
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha
 homicide$YEAR <- as.character(year(homicide$FECHA))#Año
-
+homicide$MONTH <- as.character(month(homicide$FECHA))
 
 for (i in 1:9){
 homicide$WEEK[homicide$WEEK==i]= paste0("0",i)
+}
+for (i in 1:9){
+  homicide$MONTH[homicide$MONTH==i]= paste0("0",i)
 }
 
 
@@ -52,6 +55,11 @@ Conteo <- function(varc){
     mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
 }
 
+Conteo3 <- function(varc){
+  homicide %>% group_by_(.dots = list("MONTH",varc)) %>% 
+    summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+    mutate_(Variable = "varc") %>% select(Variable, MONTH, Clase, Total)
+}
 
 semanas <- Conteo("YEAR")
 
@@ -72,7 +80,9 @@ saveWidget(serie_global, file = file.path(getwd() ,  "Seriesemanal.html")  ,  se
 ###Serie por municipios###}
 ########################
 
-for(d in homicide$`MUN-DEPT`){
+escogidos <- c("MONTELÍBANO-CÓRDOBA", "TARAZÁ-ANTIOQUIA", "TIBÚ-NORTE DE SANTANDER")
+
+for(d in escogidos){
   filtro <- homicide[homicide$`MUN-DEPT`==d,] 
   Conteo <- function(varc){
     filtro %>% group_by_(.dots = list("WEEK",varc)) %>% 
@@ -89,9 +99,32 @@ for(d in homicide$`MUN-DEPT`){
       colores = col,
       titulo = paste0(d,": Evolución por semanas del número de homicidios en cada año"),
       eje = "Número de homicidios"
-    ); serie_global
+    ) 
     
     saveWidget(serie_global, file = file.path(getwd(), "municipios", paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
+  
+}
+
+for(d in escogidos){
+  filtro <- homicide[homicide$`MUN-DEPT`==d,] 
+  Conteo <- function(varc){
+    filtro %>% group_by_(.dots = list("MONTH",varc)) %>% 
+      summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+      mutate_(Variable = "varc") %>% select(Variable, MONTH, Clase, Total)
+  }
+  
+ meses <- Conteo3("YEAR")
+  
+  
+  serie_global <- series3(
+    datos = meses,
+    categoria = "YEAR",
+    colores = col,
+    titulo = paste0(d,": Evolución por semanas del número de homicidios en cada año"),
+    eje = "Número de homicidios"
+  ) 
+  
+  saveWidget(serie_global, file = file.path(getwd(), "municipios", paste0("serie_mes_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
   
 }
 
@@ -249,4 +282,20 @@ serie_global <- series2(
 ); serie_global
 
 saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "nacionalidad.html")  ,  selfcontained = F , libdir = "libraryjs")
+
+Total <- homicide %>% group_by(YEAR) %>%  summarise(Total = sum(HOMICIDIOS)) %>% ungroup() %>% 
+  mutate(Variable="TOTAL", YEAR=YEAR, Clase = "Total", Total=Total) %>% 
+  select(Variable, YEAR, Clase, Total)
+
+
+
+serie_global <- series2(
+  datos = Total,
+  categoria = "TOTAL",
+  colores = col,
+  titulo =  "Evolución histórica general",
+  eje = "Número de homicidios"
+); serie_global
+
+saveWidget(serie_global, file = file.path(getwd() ,   "serie general.html")  ,  selfcontained = F , libdir = "libraryjs")
 
