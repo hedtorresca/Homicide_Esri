@@ -18,6 +18,8 @@ tipovar <- c("text", "date", "text", "text" , "text", "text", "text",
              "numeric","numeric", "numeric","numeric","numeric","numeric","numeric","numeric",
              "numeric","numeric", "numeric") # Especificar tipo de variables del Dataset
 
+#colores de las series
+
 col <-   c( "#8cc63f", # verde
             "#f15a24", # naranja
             "#0071bc", # azul vivo
@@ -30,6 +32,7 @@ col <-   c( "#8cc63f", # verde
             "#855b5b", # vinotinto
             "#ed1e79") # rosado
 
+#Lectura de bases de datos
 
 homicide <- read_excel("datasetanual.xlsx", 
                            sheet = 1,  col_types = tipovar)
@@ -37,25 +40,210 @@ homicide <- read_excel("datasetanual.xlsx",
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha
 homicide$YEAR <- as.character(year(homicide$FECHA))#Año
 
+
 for (i in 1:9){
 homicide$WEEK[homicide$WEEK==i]= paste0("0",i)
 }
 
-Clases <- function(varc){
+
+Conteo <- function(varc){
   homicide %>% group_by_(.dots = list("WEEK",varc)) %>% 
-    summarise(Total = n()) %>% rename_(.dots=list("Clase"=varc)) %>% 
+    summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
     mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
 }
 
+<<<<<<< HEAD
 DT1 <- Clases("YEAR")
 
 CAT_ANO_SERIE1 <- series(
   datos = DT1,
+=======
+
+semanas <- Conteo("YEAR")
+
+# Serie Nacional
+
+serie_global <- series(
+  datos = semanas,
+>>>>>>> a306d448818699f5d417c68f0940a05039742f2c
   categoria = "YEAR",
   colores = col,
   titulo = "Evolución por semanas del número de homicidios en cada año",
   eje = "Número de homicidios"
-); CAT_ANO_SERIE1
+); serei_global
 
-saveWidget(CAT_ANO_SERIE1, file = file.path(getwd() ,  "Seriesemanal.html")  ,  selfcontained = F , libdir = "libraryjs")
+saveWidget(serie_global, file = file.path(getwd() ,  "Seriesemanal.html")  ,  selfcontained = F , libdir = "libraryjs")
+
+
+#########################
+###Serie por municipios###}
+########################
+
+for(d in homicide$`MUN-DEPT`){
+  filtro <- homicide[homicide$`MUN-DEPT`==d,] 
+  Conteo <- function(varc){
+    filtro %>% group_by_(.dots = list("WEEK",varc)) %>% 
+      summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+      mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
+  }
+    
+    semanas <- Conteo("YEAR")
+    
+    
+    serie_global <- series(
+      datos = semanas,
+      categoria = "YEAR",
+      colores = col,
+      titulo = paste0(d,": Evolución por semanas del número de homicidios en cada año"),
+      eje = "Número de homicidios"
+    ); serie_global
+    
+    saveWidget(serie_global, file = file.path(getwd(),  paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
+  
+}
+
+#####################
+## Series departamentos##
+####################
+
+for(d in homicide$DEPARTAMENTO){
+  filtro <- homicide[homicide$DEPARTAMENTO==d,] 
+  Conteo <- function(varc){
+    filtro %>% group_by_(.dots = list("WEEK",varc)) %>% 
+      summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+      mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
+  }
+  
+  semanas <- Conteo("YEAR")
+ 
+   for(i in levels("YEAR"))
+  for(i in 1:53){
+    weeks
+  }
+    
+  
+  
+  serie_global <- series(
+    datos = semanas,
+    categoria = "YEAR",
+    colores = col,
+    titulo = paste0(d,": Evolución por semanas del número de homicidios en cada año"),
+    eje = "Número de homicidios"
+  ); serie_global
+  
+  saveWidget(serie_global, file = file.path(getwd(),  "series_dept", paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
+  
+}
+
+######################
+### Series por género
+#####################
+
+
+#### Por semanas
+Conteo <- function(varc){
+  homicide %>% group_by_(.dots = list("WEEK",varc)) %>% 
+    summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+    mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
+}
+
+
+semanas <- Conteo("SEXO")
+
+serie_global <- series(
+  datos = semanas,
+  categoria = "SEXO",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según sexo biológico",
+  eje = "Número de homicidios"
+); serie_global
+
+
+
+#### Por años
+Conteo2 <- function(varc){
+  homicide %>% group_by_(.dots = list("YEAR",varc)) %>% 
+    summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
+    mutate_(Variable = "varc") %>% select(Variable, YEAR, Clase, Total)
+}
+
+years <- Conteo2("SEXO")
+
+
+serie_global <- series2(
+  datos = years,
+  categoria = "SEXO",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según sexo biológico",
+  eje = "Número de homicidios"
+); serie_global
+
+
+
+#### Según sea zona rural o urbana
+
+
+
+years2 <- Conteo2("ZONA")
+
+
+serie_global <- series2(
+  datos = years2,
+  categoria = "ZONA",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según zona",
+  eje = "Número de homicidios"
+); serie_global
+
+#### Según sea el sitio espeecífico
+
+homicide$CLASE_SITIO[homicide$CLASE_SITIO != "ZONA SELVÁTICA" & homicide$CLASE_SITIO != "TIENDA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" ] = "OTRO LUGAR"
+
+
+
+years3 <- Conteo2("CLASE_SITIO")
+
+
+table(homicide$CLASE_SITIO)
+
+serie_global <- series2(
+  datos = years3,
+  categoria = "CLASE_SITIO",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según zona",
+  eje = "Número de homicidios"
+); serie_global
+
+#### Según sea el tipo de arma
+
+homicide$ARMA_EMPLEADA[homicide$ARMA_EMPLEADA != "ARMA BLANCA / CORTOPUNZANTE" & homicide$ARMA_EMPLEADA != "ARMA DE FUEGO" & homicide$ARMA_EMPLEADA != "CONTUNDENTES" & homicide$ARMA_EMPLEADA != "MINA ANTIPERSONA" ] = "OTRA"
+
+years3 <- Conteo2("ARMA_EMPLEADA")
+
+
+
+serie_global <- series2(
+  datos = years3,
+  categoria = "ARMA_EMPLEADA",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según zona",
+  eje = "Número de homicidios"
+); serie_global
+
+
+##### Nacionalidad
+
+homicide$`PAIS NACE`[homicide$`PAIS NACE` != "COLOMBIA" & homicide$`PAIS NACE` != "DESCONOCIDO"] = "EXTRANJERO"
+
+
+years3 <- Conteo2("`PAIS NACE`")
+
+
+serie_global <- series2(
+  datos = years3,
+  categoria = "`PAIS NACE`",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según nacionalidad",
+  eje = "Número de homicidios"
+); serie_global
 
