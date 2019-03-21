@@ -18,6 +18,8 @@ tipovar <- c("text", "date", "text", "text" , "text", "text", "text",
              "numeric","numeric", "numeric","numeric","numeric","numeric","numeric","numeric",
              "numeric","numeric", "numeric") # Especificar tipo de variables del Dataset
 
+
+tipovar2 <- c("numeric", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric" )
 #colores de las series
 
 col <-   c( "#8cc63f", # verde
@@ -36,6 +38,20 @@ col <-   c( "#8cc63f", # verde
 
 homicide <- read_excel("datasetanual.xlsx", 
                            sheet = 1,  col_types = tipovar)
+
+historico <- read_excel("HISTORICO.xls", 
+                       sheet = 1)
+
+
+Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
+
+
+propor <- matrix(0, 1122, 21)
+
+for(i in Poblacion$MUNICIPIO ){
+Poblacion$MUNICIPIO
+  propor <- 
+}
 
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha
 homicide$YEAR <- as.character(year(homicide$FECHA))#Año
@@ -130,7 +146,7 @@ for(d in escogidos){
 }
 
 
-for(d in homicide$`MUN-DEPT`){
+for(d in escogidos){
   filtro <- homicide[homicide$`MUN-DEPT`==d,] 
   Total <- filtro %>% group_by(YEAR) %>%  summarise(Total = sum(HOMICIDIOS)) %>% ungroup() %>% 
     mutate(Variable="TOTAL", YEAR=YEAR, Clase = "Total", Total=Total) %>% 
@@ -320,4 +336,10 @@ serie_global <- series2(
 ); serie_global
 
 saveWidget(serie_global, file = file.path(getwd() ,   "serie general.html")  ,  selfcontained = F , libdir = "libraryjs")
+
+
+
+
+
+
 
