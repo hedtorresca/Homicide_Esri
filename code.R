@@ -19,7 +19,7 @@ tipovar <- c("text", "date", "text", "text" , "text", "text", "text",
              "numeric","numeric", "numeric") # Especificar tipo de variables del Dataset
 
 
-tipovar2 <- c("numeric", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric" )
+tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric" )
 #colores de las series
 
 col <-   c( "#8cc63f", # verde
@@ -45,13 +45,54 @@ historico <- read_excel("HISTORICO.xls",
 
 Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
 
+historico$CODMUN <- 0
 
-propor <- matrix(0, 1122, 21)
-
-for(i in Poblacion$MUNICIPIO ){
-Poblacion$MUNICIPIO
-  propor <- 
+for(i in historico$`MUNICIPIO DEL HECHO`){
+  historico$CODMUN[historico$`MUNICIPIO DEL HECHO`==i] <- Poblacion$DPMP[Poblacion$MUNICIPIO == i]
 }
+
+
+for(i in historico$CODMUN){
+  historico$DEPARTAMENTO[historico$CODMUN==i] <- Poblacion$DEPARTAMENTO[Poblacion$DPMP == i]
+}
+
+propor <- tibble(0, 1122, 26)
+
+for(i in 1:1112){
+  propor[i,1] <- Poblacion$MUNICIPIO[i]
+}
+
+for(i in 1:1112){
+  propor[i,2] <- Poblacion$DPMP[i]
+}
+
+for(i in 1:1112){
+  propor[i,3] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
+}
+
+for(k in 6:19){
+for(i in historico$CODMUN){
+  propor[propor[,2]==i,k-2] <- (historico[historico$CODMUN == i, k-2]/Poblacion[Poblacion$DPMP == i,k+3])*100000
+}
+}
+grandes[,2] <- Poblacion$MUNICIPIO
+
+for(i in Poblacion$`2018`){
+  grandes <- Poblacion$DPMP[Poblacion$`2018` > 1000000]
+}
+
+for(i in Poblacion$`2018`){
+  intermedias <- Poblacion$DPMP[Poblacion$`2018` < 1000000 & Poblacion$`2018` > 100000]
+}
+
+for(i in Poblacion$`2018`){
+  peques <- Poblacion$DPMP[Poblacion$`2018` < 100000 & Poblacion$`2018` > 20000]
+}
+
+for(i in Poblacion$`2018`){
+  muypeques <- Poblacion$DPMP[Poblacion$`2018` < 20000]
+}
+
 
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha
 homicide$YEAR <- as.character(year(homicide$FECHA))#Año
