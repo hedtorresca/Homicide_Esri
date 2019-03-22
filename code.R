@@ -113,9 +113,9 @@ for(i in 1:1112){
 
 
 
-for(k in 3:18){
+for(k in 5:20){
   for(i in historico$CODMUN){
-    propor2[propor2[,1]==i,k] <- historico[historico$CODMUN == i, k-1]
+    propor2[propor2[,1]==i,k] <- historico[historico$CODMUN == i, k-3]
   }
 }
 
