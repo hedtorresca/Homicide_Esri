@@ -19,7 +19,7 @@ tipovar <- c("text", "date", "text", "text" , "text", "text", "text",
              "numeric","numeric", "numeric") # Especificar tipo de variables del Dataset
 
 
-tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric" )
+tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric" )
 #colores de las series
 
 col <-   c( "#8cc63f", # verde
