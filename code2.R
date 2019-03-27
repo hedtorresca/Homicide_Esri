@@ -19,7 +19,7 @@ tipovar <- c("text", "date", "text", "text" , "text", "text", "text",
              "numeric","numeric", "numeric") # Especificar tipo de variables del Dataset
 
 
-tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric" )
+tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric" )
 #colores de las series
 
 col <-   c( "#8cc63f", # verde
@@ -42,13 +42,10 @@ homicide <- read_excel("datasetanual.xlsx",
 historico <- read_excel("HISTORICO.xls", 
                        sheet = 1)
 
+
 Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
 
-
-
-### Organizar información
-
-##### Para Histórico Policía
+historico$CODMUN <- 0
 
 for(i in historico$`MUNICIPIO DEL HECHO`){
   historico$CODMUN[historico$`MUNICIPIO DEL HECHO`==i] <- Poblacion$DPMP[Poblacion$MUNICIPIO == i]
@@ -59,129 +56,98 @@ for(i in historico$CODMUN){
   historico$DEPARTAMENTO[historico$CODMUN==i] <- Poblacion$DEPARTAMENTO[Poblacion$DPMP == i]
 }
 
-##### Para tasas
-
+View(historico)
+head(historico)
 
 propor <- tibble(0, 1122, 26)
 
 for(i in 1:1112){
-  propor[i,2] <- Poblacion$MUNICIPIO[i]
+  propor[i,1] <- Poblacion$MUNICIPIO[i]
 }
 
 for(i in 1:1112){
-  propor[i,3] <- Poblacion$DEPARTAMENTO[i]
-}
-
-
-for(i in 1:1112){
-  propor[i,4] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
+  propor[i,2] <- Poblacion$DPMP[i]
 }
 
 for(i in 1:1112){
-  propor[i,1] <- Poblacion$DPMP[i]
+  propor[i,3] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
 }
 
+Poblacion$MUNDEPT <- 0
+for(i in 1:1112){
+  Poblacion$MUNDEPT[i] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
+}
 
-
-for(k in 5:20){
+for(k in 6:19){
 for(i in historico$CODMUN){
-  propor[propor[,1]==i,k] <- (historico[historico$CODMUN == i, k-3]/Poblacion[Poblacion$DPMP == i,k+2])*100000
+  propor[propor[,2]==i,k-2] <- (historico[historico$CODMUN == i, k-2]/Poblacion[Poblacion$DPMP == i,k+3])*100000
 }
-}
-
-##### Para conteos desde 2003
-
-
-propor2 <- tibble(0, 1122, 26)
-
-for(i in 1:1112){
-  propor2[i,2] <- Poblacion$MUNICIPIO[i]
-}
-
-for(i in 1:1112){
-  propor2[i,3] <- Poblacion$DEPARTAMENTO[i]
-}
-
-
-for(i in 1:1112){
-  propor2[i,4] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
-}
-
-for(i in 1:1112){
-  propor2[i,1] <- Poblacion$DPMP[i]
-}
-
-
-
-for(k in 5:20){
-  for(i in historico$CODMUN){
-    propor2[propor2[,1]==i,k] <- historico[historico$CODMUN == i, k-3]
-  }
-}
-
-colnames(propor)[1] <- "CÓDIGO-MUNICIPIO"
-colnames(propor)[2] <- "MUNICIPIO"
-colnames(propor)[3] <- "DEPARTAMENTO"
-colnames(propor)[4] <- "MUNICIPIO-DEPARTAMENTO"
-
-colnames(propor2)[1] <- "CÓDIGO-MUNICIPIO"
-colnames(propor2)[2] <- "MUNICIPIO"
-colnames(propor2)[3] <- "DEPARTAMENTO"
-colnames(propor2)[4] <- "MUNICIPIO-DEPARTAMENTO"
-
-
-Final <- full_join(propor, propor2, by=c("CÓDIGO-MUNICIPIO", "MUNICIPIO", "DEPARTAMENTO","MUNICIPIO-DEPARTAMENTO"))
-
-write.xlsx(Final, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
-
-pares <- seq(6,36, by=2)
-impares <- seq(5,36, by=2) 
-
-mix <- matrix(0,nrow=1112, ncol= 36)
-mix[,1:4] = propor[,1:4]
-
-mix[,7]
-k=0
-for (i in impares){
-  mix[,i] <- propor2[,i-k]
-  k=k+1
-}
-
-#### Clasificación de ciudades
-
-grandes[,2] <- Poblacion$MUNICIPIO
-
-for(i in Poblacion$`2018`){
-  grandes <- Poblacion$DPMP[Poblacion$`2018` > 1000000]
 }
 
 for(i in Poblacion$`2018`){
-  intermedias <- Poblacion$DPMP[Poblacion$`2018` < 1000000 & Poblacion$`2018` > 100000]
+  grandes <- Poblacion$MUNDEPT[Poblacion$`2018` > 1000000]
+}
+grandes
+
+
+for(i in Poblacion$`2018`){
+  intermedias <- Poblacion$MUNDEPT[Poblacion$`2018` < 1000000 & Poblacion$`2018` > 100000]
+}
+
+intermedias
+
+for(i in Poblacion$`2018`){
+  peques <- Poblacion$MUNDEPT[Poblacion$`2018` < 100000 & Poblacion$`2018` > 20000]
 }
 
 for(i in Poblacion$`2018`){
-  peques <- Poblacion$DPMP[Poblacion$`2018` < 100000 & Poblacion$`2018` > 20000]
+  muypeques <- Poblacion$MUNDEPT[Poblacion$`2018` < 20000]
 }
 
-for(i in Poblacion$`2018`){
-  muypeques <- Poblacion$DPMP[Poblacion$`2018` < 20000]
+View(propor)
+
+propor <- na.omit(propor)
+
+Variable <- as.tibble(matrix(nrow= (nrow(propor)-1)*14, ncol = 1, "Municipio"))
+  Year <- as.tibble( rep(c(2005:2018), (nrow(propor)-1)))
+
+repet <- as.matrix(0, nrow= 1,ncol= 14)
+repet <- t(rep(propor$`26`[1], 14))
+for(i in 2:nrow(propor)-1){
+repetir  <- t(rep(propor$`26`[i], 14))
+repet <- cbind(repet, repetir)
 }
 
-#### Gráficos según BD POLICIA 2010
+tasa <- propor[2,4:17]
+for(i in 3:nrow(propor)){
+tasas <- propor[i,4:17]
+tasa <- cbind(tasa, tasas)
+}
+
+
+repet <- t(repet)
+ 
+tasa <- t(tasa)
+
+View(repet) 
+
+
+Clase <- as.tibble(repet)
+Total <- as.tibble(tasa)
+
+homicidios <- bind_cols(Variable, Year, Clase, Total)
 
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha
-homicide$YEAR <- as.character(year(homicide$FECHA)) #Año
-homicide$MONTH <- as.character(month(homicide$FECHA)) #meses
+homicide$YEAR <- as.character(year(homicide$FECHA))#Año
+homicide$MONTH <- as.character(month(homicide$FECHA))
 
 for (i in 1:9){
 homicide$WEEK[homicide$WEEK==i]= paste0("0",i)
 }
-
 for (i in 1:9){
   homicide$MONTH[homicide$MONTH==i]= paste0("0",i)
 }
 
-## Funciones conteo
 
 Conteo <- function(varc){
   homicide %>% group_by_(.dots = list("WEEK",varc)) %>% 
@@ -189,7 +155,7 @@ Conteo <- function(varc){
     mutate_(Variable = "varc") %>% select(Variable, WEEK, Clase, Total)
 }
 
-Conteo2 <- function(varc){
+Conteo3 <- function(varc){
   homicide %>% group_by_(.dots = list("MONTH",varc)) %>% 
     summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
     mutate_(Variable = "varc") %>% select(Variable, MONTH, Clase, Total)
@@ -205,19 +171,16 @@ serie_global <- series(
   colores = col,
   titulo = "Evolución por semanas del número de homicidios en cada año",
   eje = "Número de homicidios"
-); serie_global
+); serei_global
 
 saveWidget(serie_global, file = file.path(getwd() ,  "Seriesemanal.html")  ,  selfcontained = F , libdir = "libraryjs")
 
 
 #########################
-###Serie por municipios
+###Serie por municipios###}
 ########################
 
-escogidos <- c("RESTREPO-META")
-
-
-####  Semanas 
+escogidos <- c("ACACÏAS-META", "TARAZÁ-ANTIOQUIA", "TIBÚ-NORTE DE SANTANDER")
 
 for(d in escogidos){
   filtro <- homicide[homicide$`MUN-DEPT`==d,] 
@@ -238,21 +201,20 @@ for(d in escogidos){
       eje = "Número de homicidios"
     ) 
     
-    saveWidget(serie_global, file = file.path(getwd(), "municipios", paste0("serie_semanal", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
+    saveWidget(serie_global, file = file.path(getwd(), "municipios", paste0("serie_", d, ".html"))  ,  selfcontained = F , libdir = "libraryjs")
   
 }
 
-#### Meses
 
 for(d in escogidos){
   filtro <- homicide[homicide$`MUN-DEPT`==d,] 
-  Conteo <- function(varc){
+  Conteo3 <- function(varc){
     filtro %>% group_by_(.dots = list("MONTH",varc)) %>% 
       summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
       mutate_(Variable = "varc") %>% select(Variable, MONTH, Clase, Total)
   }
   
-  meses <- Conteo("YEAR")
+  meses <- Conteo3("YEAR")
   
   
   serie_global <- series3(
@@ -267,7 +229,6 @@ for(d in escogidos){
   
 }
 
-#### Años 
 
 for(d in escogidos){
   filtro <- homicide[homicide$`MUN-DEPT`==d,] 
@@ -309,6 +270,7 @@ for(d in homicide$DEPARTAMENTO){
   }
     
   
+  
   serie_global <- series(
     datos = semanas,
     categoria = "YEAR",
@@ -334,15 +296,27 @@ Conteo <- function(varc){
 }
 
 
+semanas <- Conteo("SEXO")
+
+serie_global <- series(
+  datos = semanas,
+  categoria = "SEXO",
+  colores = col,
+  titulo =  "Evolución por semanas del número de homicidios según sexo biológico",
+  eje = "Número de homicidios"
+); serie_global
+
+saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "sexo(semanas).html")  ,  selfcontained = F , libdir = "libraryjs")
+
 
 #### Por años
-Conteo3 <- function(varc){
+Conteo2 <- function(varc){
   homicide %>% group_by_(.dots = list("YEAR",varc)) %>% 
     summarise(Total = sum(HOMICIDIOS)) %>% rename_(.dots=list("Clase"=varc)) %>% 
     mutate_(Variable = "varc") %>% select(Variable, YEAR, Clase, Total)
 }
 
-years <- Conteo3("SEXO")
+years <- Conteo2("SEXO")
 
 
 serie_global <- series2(
@@ -360,7 +334,7 @@ saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "sexo (a
 
 
 
-years2 <- Conteo3("ZONA")
+years2 <- Conteo2("ZONA")
 
 
 serie_global <- series2(
@@ -373,13 +347,13 @@ serie_global <- series2(
 
 saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "zona.html")  ,  selfcontained = F , libdir = "libraryjs")
 
-#### Según sea el sitio específico
+#### Según sea el sitio espeecífico
 
 homicide$CLASE_SITIO[homicide$CLASE_SITIO != "RIOS" & homicide$CLASE_SITIO != "FRENTE A RESIDENCIAS   VIA PUBLICA" & homicide$CLASE_SITIO != "VIAS PUBLICAS" & homicide$CLASE_SITIO != "FINCAS Y SIMILARES" & homicide$CLASE_SITIO != "CASAS DE HABITACION" & homicide$CLASE_SITIO != "DENTRO DE LA VIVIENDA" & homicide$CLASE_SITIO != "BARES, CANTINAS Y SIMILARES" & homicide$CLASE_SITIO != "CARRETERAS"] = "OTRO LUGAR"
 
 
 
-years3 <- Conteo3("CLASE_SITIO")
+years3 <- Conteo2("CLASE_SITIO")
 
 
 table(homicide$CLASE_SITIO)
@@ -398,7 +372,7 @@ saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "lugar d
 
 homicide$ARMA_EMPLEADA[homicide$ARMA_EMPLEADA != "ARMA BLANCA / CORTOPUNZANTE" & homicide$ARMA_EMPLEADA != "ARMA DE FUEGO" & homicide$ARMA_EMPLEADA != "CONTUNDENTES" & homicide$ARMA_EMPLEADA != "MINA ANTIPERSONA" ] = "OTRA"
 
-years3 <- Conteo3("ARMA_EMPLEADA")
+years3 <- Conteo2("ARMA_EMPLEADA")
 
 
 
@@ -418,7 +392,7 @@ saveWidget(serie_global, file = file.path(getwd() ,  "desagregaciones", "arma em
 homicide$`PAIS NACE`[homicide$`PAIS NACE` != "COLOMBIA" & homicide$`PAIS NACE` != "DESCONOCIDO"] = "EXTRANJERO"
 
 
-years3 <- Conteo3("`PAIS NACE`")
+years3 <- Conteo2("`PAIS NACE`")
 
 
 serie_global <- series2(
