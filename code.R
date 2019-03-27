@@ -9,6 +9,7 @@ library(highcharter)
 library(readxl) #Paquete para lectura de datos.
 library(ggplot2)
 library(htmlwidgets)
+library(xlsx)
 source("functions.R", encoding = 'UTF-8')
 
 tipovar <- c("text", "date", "text", "text" , "text", "text", "text", 
@@ -131,6 +132,7 @@ colnames(propor2)[4] <- "MUNICIPIO-DEPARTAMENTO"
 
 
 Final <- full_join(propor, propor2, by=c("CÓDIGO-MUNICIPIO", "MUNICIPIO", "DEPARTAMENTO","MUNICIPIO-DEPARTAMENTO"))
+
 
 write.xlsx(Final, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
 
