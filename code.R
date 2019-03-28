@@ -136,18 +136,7 @@ Final <- full_join(propor, propor2, by=c("CÓDIGO-MUNICIPIO", "MUNICIPIO", "DEPA
 
 write.xlsx(Final, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
 
-pares <- seq(6,36, by=2)
-impares <- seq(5,36, by=2) 
 
-mix <- matrix(0,nrow=1112, ncol= 36)
-mix[,1:4] = propor[,1:4]
-
-mix[,7]
-k=0
-for (i in impares){
-  mix[,i] <- propor2[,i-k]
-  k=k+1
-}
 
 #### Clasificación de ciudades
 
