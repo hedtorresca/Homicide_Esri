@@ -93,7 +93,7 @@ for(i in historico$CODMUN){
 ##### Para conteos desde 2003
 
 
-propor2 <- tibble(0, 1122, 26)
+propor2 <- tibble(0, 1122, 46)
 
 for(i in 1:1112){
   propor2[i,2] <- Poblacion$MUNICIPIO[i]
@@ -120,6 +120,36 @@ for(k in 5:20){
   }
 }
 
+for(k in 21:36){
+  for(i in historico$CODMUN){
+    propor2[propor2[,1]==i,k] <- Poblacion[Poblacion$DPMP == i,k+2-16]
+  }
+}
+
+
+TotPoblacion <-  rowSums (select (propor2, contains (".1")))
+TotHomicide <- rowSums(propor2[,5:20])
+
+propor[,21] <- TotPoblacion
+
+
+
+for(k in 37:52){
+for(i in historico$CODMUN){
+  propor2[propor2[,1]==i,k] <- ((propor2[propor2[,1]==i,k-32]*propor2[propor2[,1]==i,k-16])/propor[propor[,1]==i,21])
+}
+}
+
+Promedio <-  rowMeans (select (propor2, contains (".1")))
+
+Conteo <- rowSums (select (propor2, contains (".2")))
+ 
+Tasa <- (Conteo/Promedio)*100000
+
+Conteo[1]
+
+Final[,37] <- Tasa
+
 colnames(propor)[1] <- "CÓDIGO-MUNICIPIO"
 colnames(propor)[2] <- "MUNICIPIO"
 colnames(propor)[3] <- "DEPARTAMENTO"
@@ -130,13 +160,17 @@ colnames(propor2)[2] <- "MUNICIPIO"
 colnames(propor2)[3] <- "DEPARTAMENTO"
 colnames(propor2)[4] <- "MUNICIPIO-DEPARTAMENTO"
 
+propor[21] <- Tasa
+
+colnames(Final)[37] <- "Tasa Promedio"
 
 Final <- full_join(propor, propor2, by=c("CÓDIGO-MUNICIPIO", "MUNICIPIO", "DEPARTAMENTO","MUNICIPIO-DEPARTAMENTO"))
 
 
 write.xlsx(Final, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
 
-
+na.omit(propor2)
+for(i in 1:)
 
 #### Clasificación de ciudades
 
@@ -158,6 +192,10 @@ for(i in Poblacion$`2018`){
   muypeques <- Poblacion$DPMP[Poblacion$`2018` < 20000]
 }
 
+
+for(i in Poblacion$`2018`){
+  grandes <- Poblacion$DPMP[Poblacion$`2018` > 1000000]
+}
 #### Gráficos según BD POLICIA 2010
 
 homicide$WEEK <- as.character(week(homicide$FECHA)) #Convierte en la semana correspondiente la fecha

@@ -108,18 +108,18 @@ View(propor)
 
 propor <- na.omit(propor)
 
-Variable <- as.tibble(matrix(nrow= (nrow(propor)-1)*14, ncol = 1, "Municipio"))
-  Year <- as.tibble( rep(c(2005:2018), (nrow(propor)-1)))
+Variable <- as.tibble(matrix(nrow= nrow(propor)*16, ncol = 1, "Municipio"))
+  YEAR <- as.tibble( rep(c(2003:2018), (nrow(propor))))
 
-repet <- as.matrix(0, nrow= 1,ncol= 14)
-repet <- t(rep(propor$`26`[1], 14))
+repet <- as.matrix(0, nrow= 1,ncol= 16)
+repet <- t(rep(propor$[1], 14))
 for(i in 2:nrow(propor)-1){
-repetir  <- t(rep(propor$`26`[i], 14))
+repetir  <- t(rep(propor$`26`[i], 16))
 repet <- cbind(repet, repetir)
 }
 
-tasa <- propor[2,4:17]
-for(i in 3:nrow(propor)){
+tasa <- propor[1,4:17]
+for(i in 2:nrow(propor)){
 tasas <- propor[i,4:17]
 tasa <- cbind(tasa, tasas)
 }
