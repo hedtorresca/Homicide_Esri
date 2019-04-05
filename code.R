@@ -65,20 +65,20 @@ for(i in historico$CODMUN){
 
 propor <- tibble(0, 1122, 26)
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor[i,2] <- Poblacion$MUNICIPIO[i]
 }
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor[i,3] <- Poblacion$DEPARTAMENTO[i]
 }
 
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor[i,4] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
 }
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor[i,1] <- Poblacion$DPMP[i]
 }
 
@@ -95,20 +95,20 @@ for(i in historico$CODMUN){
 
 propor2 <- tibble(0, 1122, 46)
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor2[i,2] <- Poblacion$MUNICIPIO[i]
 }
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor2[i,3] <- Poblacion$DEPARTAMENTO[i]
 }
 
 
-for(i in 1:1112){
-  propor2[i,4] <- paste0(Poblacion$MUNICIPIO[i], "-", Poblacion$DEPARTAMENTO[i])
+for(i in 1:1122){
+  propor2[i,4] <- paste0(Poblacion$MUNICIPIO[i], " - ", Poblacion$DEPARTAMENTO[i])
 }
 
-for(i in 1:1112){
+for(i in 1:1122){
   propor2[i,1] <- Poblacion$DPMP[i]
 }
 
@@ -129,14 +129,26 @@ for(k in 21:36){
 
 TotPoblacion <-  rowSums (select (propor2, contains (".1")))
 TotHomicide <- rowSums(propor2[,5:20])
-
-propor[,21] <- TotPoblacion
+MeanTasa <- rowMeans(propor[,5:20])
+SdTasa <- apply(propor[,5:20],1,sd) 
+CVTasa<- 100*SdTasa/MeanTasa
+propor[,21] <-MeanTasa 
+propor[,22] <-SdTasa
+propor[,23] <-CVTasa
 
 
 
 for(k in 37:52){
+  for(i in historico$CODMUN){
+    propor2[propor2[,1]==i,k] <- ((propor2[propor2[,1]==i,k-32]*propor2[propor2[,1]==i,k-16])/propor[propor[,1]==i,21])
+  }
+}
+
+
+
+for(k in 21:36){
 for(i in historico$CODMUN){
-  propor2[propor2[,1]==i,k] <- ((propor2[propor2[,1]==i,k-32]*propor2[propor2[,1]==i,k-16])/propor[propor[,1]==i,21])
+  propor[propor[,1]==i,k] <- ((propor[propor[,1]==i,k-16]*propor[propor2[,1]==i,k-16])/propor[propor[,1]==i,21])
 }
 }
 
