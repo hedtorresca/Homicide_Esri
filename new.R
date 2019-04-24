@@ -347,4 +347,13 @@ for(k in 5:21){
 
 settasasall <- unique(rbind(settasas1,settasas2, settasas3, settasas4))
 
+settasasall$promedio.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,mean) 
+settasasall$sd.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,sd)
+settasasall$cv.tasa <- 100*sd.tasa/promedio.tasa
+
 write.xlsx(settasasall, file = "Última.xlsx", sheetName = "Tasas y conteos")
+
+
+### Municipios con violencia crónica
+
+settasasall <- 
