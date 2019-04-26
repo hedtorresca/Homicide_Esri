@@ -520,7 +520,12 @@ write.xlsx(settasasall, file = "Última.xlsx", sheetName = "Tasas y conteos")
 
 ### Municipios con violencia crónica
 source("code.R")
+newvector <- matrix(0, nrow = 1112, ncol=1)
+propor <- cbind(propor[1:4], newvector, propor[5:23])
+colnames(propor)[5:21] <- colnames(settasasall[5:21])
 
 for(i in settasasall$Código){
-  propor2
+  propor[propor$`CÓDIGO-MUNICIPIO`== i,] <- settasasall[settasasall$Código == i,]
 }
+
+write.xlsx(settasasall, file = "Última.xlsx", sheetName = "Tasas y conteos")
