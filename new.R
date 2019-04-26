@@ -511,21 +511,26 @@ for(k in 5:21){
 }
 settasasall <- unique(rbind(settasas1,settasas2, settasas3, settasas4, settasas5, settasas6))
 
+settasasalldef <- cbind(settasasall[,1:21], 
+
 settasasall$promedio.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,mean) 
 settasasall$sd.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,sd)
 settasasall$cv.tasa <- 100*settasasall$sd.tasa/settasasall$promedio.tasa
 
-write.xlsx(settasasall, file = "Última.xlsx", sheetName = "Tasas y conteos")
+settasasalldef <- cbind(settasasall[,1:21], settasasall$promedio.tasa, settasasall$sd.tasa, settasasall$cv.tasa, settasasall[,22:55])
+colnames(settasasalldef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
+
+write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
 
 
 ### Municipios con violencia crónica
 source("code.R")
 newvector <- matrix(0, nrow = 1112, ncol=1)
-propor <- cbind(propor[1:4], newvector, propor[5:23])
-colnames(propor)[5:21] <- colnames(settasasall[5:21])
+propordef <- cbind(propor[1:4], newvector, propor[5:23])
+colnames(propordef)[5:21] <- colnames(settasasall[5:21])
 
-for(i in settasasall$Código){
-  propor[propor$`CÓDIGO-MUNICIPIO`== i,] <- settasasall[settasasall$Código == i,]
+for(i in settasasalldef$Código){
+  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,] <- settasasalldef[settasasalldef$Código == i,]
 }
 
-write.xlsx(settasasall, file = "Última.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")

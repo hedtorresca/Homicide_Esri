@@ -163,7 +163,7 @@ colnames(propor)[21] <- "TASA PROMEDIO"
 colnames(propor)[22] <- "DESVIACIÓN ESTÁNDAR"
 colnames(propor)[23] <- "COEFICIENTE DE VARIACIÓN"
 
-write.xlsx(propor, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(propor, file = "Tasas2.xlsx", sheetName = "Tasas y conteos")
 
 Final <- full_join(propor, propor2, by=c("CÓDIGO-MUNICIPIO", "MUNICIPIO", "DEPARTAMENTO","MUNICIPIO-DEPARTAMENTO"))
 
