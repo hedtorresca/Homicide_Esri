@@ -114,8 +114,9 @@ colnames(propordef)[42:58] <- colnames(settasasalldef[42:58])
 
 
 for(i in settasasalldef$Código){
-  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,] <- settasasalldef[settasasalldef$Código == i,]
-}
+  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,1:41] <- settasasalldef[settasasalldef$Código == i,][,1:41]
+  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,42:58] <- settasasalldef[settasasalldef$Código == i,][,42:58]
+  }
 
 write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")
 
