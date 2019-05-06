@@ -15,9 +15,10 @@ Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
 
 nfile <- 7 # Especificar número de archivos
 for(i in 1:nfile ){
-
 file <- paste0("Data/Municipios", i, ".xlsx")
 rownames <- getSheetNames(file)
+rownames <- gsub(" ", "", rownames)
+
 
 setconteos <- NULL
 setfuentes <- NULL
@@ -86,20 +87,32 @@ for(k in 5:21){
 assign(paste0("settasas", idfile), x)
 }
 
-# for(i in nfile){
-# settasasall <- unique(rbind(settasas1, paste0("settasas", i)))
-# }
-# 
-
-settasasall <- unique(rbind(settasas1,settasas2, settasas3, settasas4, settasas5, settasas6, settasas7))
+settasasall <- NULL
+for(i in 1:nfile){
+settasasall <- unique(rbind(settasasall, eval(as.name(paste0("settasas",i)))))
+}
 
 
-  settasasall$promedio.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,mean) 
-                        settasasall$sd.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,sd)
-  settasasall$cv.tasa <- 100*settasasall$sd.tasa/settasasall$promedio.tasa
+settasasall$promedio.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,mean) 
+settasasall$sd.tasa <- apply(apply(select (settasasall, contains (".tasa")),2,as.numeric),1,sd)
+settasasall$cv.tasa <- 100*settasasall$sd.tasa/settasasall$promedio.tasa
                         
-                        settasasalldef <- cbind(settasasall[,1:21], settasasall$promedio.tasa, settasasall$sd.tasa, settasasall$cv.tasa, settasasall[,22:55])
-                        colnames(settasasalldef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
+settasasalldef <- cbind(settasasall[,1:21], settasasall$promedio.tasa, settasasall$sd.tasa, settasasall$cv.tasa, settasasall[,22:55])
+colnames(settasasalldef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
                         
-                        write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
-                        
+write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
+
+### Municipios con violencia crónica
+source("code.R", encoding = "UTF8")
+newvector <- matrix(0, nrow = 1112, ncol=1)
+propordef <- cbind(propor[1:4], newvector, Final[5:23], newvector, Final[24:39] )
+colnames(propordef)[5:21] <- colnames(settasasall[5:21])
+colnames(propordef)[25:41] <- colnames(settasasalldef[25:41])
+
+
+for(i in settasasalldef$Código){
+  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,] <- settasasalldef[settasasalldef$Código == i,]
+}
+
+write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")
+
