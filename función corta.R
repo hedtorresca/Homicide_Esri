@@ -13,7 +13,7 @@ Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
 
 ### Lectura de archivos
 
-nfile <- 7 # Especificar número de archivos
+nfile <- 8 # Especificar número de archivos
 for(i in 1:nfile ){
 file <- paste0("Data/Municipios", i, ".xlsx")
 rownames <- getSheetNames(file)
@@ -104,9 +104,9 @@ write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
 
 ### Municipios con violencia crónica
 source("code.R", encoding = "UTF8")
-newvector <- matrix(0, nrow = 1112, ncol=1)
-newvector2 <- matrix("No info", nrow = 1112, ncol=1)
-newmatrix <- matrix("Policía", nrow= 1112, ncol=16)
+newvector <- matrix(0, nrow = 1122, ncol=1)
+newvector2 <- matrix("No info", nrow = 1122, ncol=1)
+newmatrix <- matrix("Policía", nrow= 1122, ncol=16)
 propordef <- cbind(propor[1:4], newvector, Final[5:23], newvector, Final[24:39], newvector2, newmatrix)
 colnames(propordef)[5:21] <- colnames(settasasalldef[5:21])
 colnames(propordef)[25:41] <- colnames(settasasalldef[25:41])
@@ -115,8 +115,18 @@ colnames(propordef)[42:58] <- colnames(settasasalldef[42:58])
 
 for(i in settasasalldef$Código){
   propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,1:41] <- settasasalldef[settasasalldef$Código == i,][,1:41]
-  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,42:58] <- settasasalldef[settasasalldef$Código == i,][,42:58]
   }
 
+propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,42:58] <- 
+  
 write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")
+####
 
+tipovar2 <- c("numeric", "text", "numeric", "text")
+
+repetidos <- read_excel("Data/Repetidos.xlsx", col_types = tipovar2)
+
+for(i in repetidos$'Código Municipio'){
+  propordef <- propordef %>% filter(repetidos$`Codigo Departamento`)
+  
+}
