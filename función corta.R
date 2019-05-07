@@ -105,8 +105,8 @@ write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
 ### Municipios con violencia crónica
 source("code.R", encoding = "UTF8")
 newvector <- matrix(0, nrow = 1122, ncol=1)
-newvector2 <- matrix("No info", nrow = 1122, ncol=1)
-newmatrix <- matrix("Policía", nrow= 1122, ncol=16)
+newvector2 <- matrix(NA, nrow = 1122, ncol=1)
+newmatrix <- matrix(NA, nrow= 1122, ncol=16)
 propordef <- cbind(propor[1:4], newvector, Final[5:23], newvector, Final[24:39], newvector2, newmatrix)
 colnames(propordef)[5:21] <- colnames(settasasalldef[5:21])
 colnames(propordef)[25:41] <- colnames(settasasalldef[25:41])
@@ -114,19 +114,30 @@ colnames(propordef)[42:58] <- colnames(settasasalldef[42:58])
 
 
 for(i in settasasalldef$Código){
-  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,1:41] <- settasasalldef[settasasalldef$Código == i,][,1:41]
+  propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,1:58] <- settasasalldef[settasasalldef$Código == i,][,1:58]
+  
+  
   }
 
-propordef[propordef$`CÓDIGO-MUNICIPIO`== i,][,42:58] <- 
-  
+propordef[,43:58][is.na(propordef[,43:58])] <- "Policía"
+
 write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")
 ####
 
-tipovar2 <- c("numeric", "text", "numeric", "text")
+tipovar2 <- c("text", "text", "text", "text")
 
 repetidos <- read_excel("Data/Repetidos.xlsx", col_types = tipovar2)
-
-for(i in repetidos$'Código Municipio'){
-  propordef <- propordef %>% filter(repetidos$`Codigo Departamento`)
-  
+repetido <- NULL
+for(i in as.character(repetidos$'Código Municipio')){
+  x <- propordef %>% filter(propordef$`CÓDIGO-MUNICIPIO` == i)
+  repetido <- rbind(repetido, x)
 }
+
+write.xlsx(repetido, file = "repetidos.xlsx", sheetName = "Tasas y conteos")
+
+
+for(i in as.character(repetidos$'Código Municipio')){
+  propordef <- propordef %>% filter(propordef$`CÓDIGO-MUNICIPIO` != i)
+}
+write.xlsx(propordef, file = "Sin repetidos.xlsx", sheetName = "Tasas y conteos")
+
