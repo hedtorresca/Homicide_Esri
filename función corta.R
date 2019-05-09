@@ -12,8 +12,7 @@ Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
 
 
 ### Lectura de archivos
-
-nfile <- 8 # Especificar número de archivos
+nfile <- 10 # Especificar número de archivos
 for(i in 1:nfile ){
 file <- paste0("Data/Municipios", i, ".xlsx")
 rownames <- getSheetNames(file)
@@ -73,7 +72,8 @@ colnames(settasas) <- c("Código", "Municipio", "Departamento", "Municipio - Dep
 x <- as_tibble(cbind(settasas, matrix(0, ncol=17, nrow=length(rownames)), setconteos, setfuentes))
 
 filename <- basename(file)
-idfile <- substr(filename, 11,11)
+idfile <- substr(filename, 11, 17)
+idfile <- gsub(".xlsx", "", idfile)
 
 
 
@@ -140,4 +140,23 @@ for(i in as.character(repetidos$'Código Municipio')){
   propordef <- propordef %>% filter(propordef$`CÓDIGO-MUNICIPIO` != i)
 }
 write.xlsx(propordef, file = "Sin repetidos.xlsx", sheetName = "Tasas y conteos")
+
+repeatmedicin <- rbind(settasas9, settasas10)
+
+repeatmedicin$promedio.tasa <- apply(apply(select (repeatmedicin, contains (".tasa")),2,as.numeric),1,mean) 
+repeatmedicin$sd.tasa <- apply(apply(select (repeatmedicin, contains (".tasa")),2,as.numeric),1,sd)
+repeatmedicin$cv.tasa <- 100*repeatmedicin$sd.tasa/repeatmedicin$promedio.tasa
+
+repeatmedicindef <- cbind(repeatmedicin[,1:21], repeatmedicin$promedio.tasa, repeatmedicin$sd.tasa, repeatmedicin$cv.tasa, repeatmedicin[,22:55])
+colnames(repeatmedicindef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
+write.xlsx(repeatmedicindef, file = "Repetidos medicina.xlsx", sheetName = "Tasas y conteos")
+
+colnames(propordef)[1:4] <- c("Código", "Municipio", "Departamento", "Municipio - Departamento")
+
+todos <- rbind(propordef, repeatmedicindef)
+write.xlsx(todos, file = "todos.xlsx", sheetName = "Tasas y conteos")
+
+names(propordef)
+names(repeatmedicindef)
+
 
