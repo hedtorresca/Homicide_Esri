@@ -156,7 +156,5 @@ colnames(propordef)[1:4] <- c("Código", "Municipio", "Departamento", "Municipio
 todos <- rbind(propordef, repeatmedicindef)
 write.xlsx(todos, file = "todos.xlsx", sheetName = "Tasas y conteos")
 
-names(propordef)
-names(repeatmedicindef)
 
 

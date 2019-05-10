@@ -37,8 +37,8 @@ col <-   c( "#8cc63f", # verde
 
 #Lectura de bases de datos
 
-homicide <- read_excel("datasetanual.xlsx", 
-                           sheet = 1,  col_types = tipovar)
+# homicide <- read_excel("datasetanual.xlsx", 
+#                            sheet = 1,  col_types = tipovar)
 
 historico <- read_excel("HISTORICO.xls", 
                        sheet = 1)
