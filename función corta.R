@@ -156,5 +156,12 @@ colnames(propordef)[1:4] <- c("Código", "Municipio", "Departamento", "Municipio
 todos <- rbind(propordef, repeatmedicindef)
 write.xlsx(todos, file = "todos.xlsx", sheetName = "Tasas y conteos")
 
+picos <- NULL
+for(i in 2002:2018){
+picosaño <- filter(todos, sapply(select (todos, contains (paste0(i,".tasa"))), as.numeric, 2) > 80.0 ) %>% mutate(Año = i) %>%  select("Código", "Municipio", "Departamento", "Municipio - Departamento","Tasa" = paste0(i,".tasa"), Año)
+picos <- rbind(picos, picosaño) 
 
+}
+
+write.xlsx(picos, file = "picos(tasa sobre 80).xlsx", sheetName = "Tasas y años")
 
