@@ -10,7 +10,7 @@ library(readxl) #Paquete para lectura de datos.
 library(ggplot2)
 library(htmlwidgets)
 library(openxlsx)
-source("functions.R", encoding = 'UTF-8')
+source("code/functions.R", encoding = 'UTF-8')
 
 tipovar <- c("text", "date", "text", "text" , "text", "text", "text", 
              "text", "text", "text", "text", "text", "numeric",	"text",	"text",
@@ -37,13 +37,10 @@ col <-   c( "#8cc63f", # verde
 
 #Lectura de bases de datos
 
-# homicide <- read_excel("datasetanual.xlsx", 
-#                            sheet = 1,  col_types = tipovar)
-
-historico <- read_excel("HISTORICO.xls", 
+historico <- read_excel("data/historico.xls", 
                        sheet = 1)
 
-Poblacion <- read_excel("ProyeccionDane2.xlsx", col_types = tipovar2)
+Poblacion <- read_excel("data/ProyeccionDane2003.xlsx", col_types = tipovar2)
 
 
 
@@ -162,22 +159,14 @@ colnames(propor2)[2] <- "MUNICIPIO"
 colnames(propor2)[3] <- "DEPARTAMENTO"
 colnames(propor2)[4] <- "MUNICIPIO-DEPARTAMENTO"
 
-TotPoblacion <-  rowSums (select (propor2, contains (".1")))
-TotHomicide <- rowSums(propor2[,5:20])
-MeanTasa <- rowMeans(propor[,5:20])
-SdTasa <- apply(propor[,5:20],1,sd) 
-CVTasa<- 100*SdTasa/MeanTasa
-propor[,21] <-MeanTasa 
-propor[,22] <-SdTasa
-propor[,23] <-CVTasa
+
 
 colnames(propor)[21] <- "TASA PROMEDIO"
 colnames(propor)[22] <- "DESVIACIÓN ESTÁNDAR"
 colnames(propor)[23] <- "COEFICIENTE DE VARIACIÓN"
 
-write.xlsx(propor, file = "Tasas2.xlsx", sheetName = "Tasas y conteos")
-
+write.xlsx(propor2, file = "data_generate/policia_tasas_poblaciones.xlsx", sheetName = "Tasas, conteos, poblaciones")
 
 Final <- cbind(propor[,1:23], propor2[,5:20])
-write.xlsx(Final, file = "Tasas.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(Final, file = "data_generate/policia_tasas.xlsx", sheetName = "Tasas, medidas, conteos")
 

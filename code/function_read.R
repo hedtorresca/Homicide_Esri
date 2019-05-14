@@ -8,13 +8,13 @@ library(openxlsx)
 
 tipovar2 <- c("numeric", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric","numeric", "numeric", "numeric", "numeric", "numeric" , "numeric", "numeric", "numeric", "numeric", "numeric" )
 
-Poblacion <- read_excel("ProyeccionDane.xlsx", col_types = tipovar2)
+Poblacion <- read_excel("data/ProyeccionDane2002.xlsx", col_types = tipovar2)
 
 
 ### Lectura de archivos
 nfile <- 10 # Especificar número de archivos
 for(i in 1:nfile ){
-file <- paste0("Data/Municipios", i, ".xlsx")
+file <- paste0("data/Municipios", i, ".xlsx")
 rownames <- getSheetNames(file)
 rownames <- gsub(" ", "", rownames)
 
@@ -100,10 +100,10 @@ settasasall$cv.tasa <- 100*settasasall$sd.tasa/settasasall$promedio.tasa
 settasasalldef <- cbind(settasasall[,1:21], settasasall$promedio.tasa, settasasall$sd.tasa, settasasall$cv.tasa, settasasall[,22:55])
 colnames(settasasalldef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
                         
-write.xlsx(settasasalldef, file = "Última.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(settasasalldef, file = "data_generate/municipios_isabella.xlsx", sheetName = "Tasas y conteos")
 
 ### Municipios con violencia crónica
-source("code.R", encoding = "UTF8")
+source("code/code_policiaold.R", encoding = "UTF8")
 newvector <- matrix(0, nrow = 1122, ncol=1)
 newvector2 <- matrix(NA, nrow = 1122, ncol=1)
 newmatrix <- matrix(NA, nrow= 1122, ncol=16)
@@ -121,25 +121,26 @@ for(i in settasasalldef$Código){
 
 propordef[,43:58][is.na(propordef[,43:58])] <- "Policía"
 
-write.xlsx(propordef, file = "ÚltimaVar.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(propordef, file = "data_generate/mezcla_de_fuentes.xlsx", sheetName = "Tasas y conteos")
+
 ####
 
 tipovar2 <- c("text", "text", "text", "text")
 
-repetidos <- read_excel("Data/Repetidos.xlsx", col_types = tipovar2)
+repetidos <- read_excel("data_generate/Repetidos.xlsx", col_types = tipovar2)
 repetido <- NULL
 for(i in as.character(repetidos$'Código Municipio')){
   x <- propordef %>% filter(propordef$`CÓDIGO-MUNICIPIO` == i)
   repetido <- rbind(repetido, x)
 }
 
-write.xlsx(repetido, file = "repetidos.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(repetido, file = "data_generate/repetidos.xlsx", sheetName = "Tasas y conteos")
 
 
 for(i in as.character(repetidos$'Código Municipio')){
   propordef <- propordef %>% filter(propordef$`CÓDIGO-MUNICIPIO` != i)
 }
-write.xlsx(propordef, file = "Sin repetidos.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(propordef, file = "data_generate/sin_repetidos.xlsx", sheetName = "Tasas y conteos")
 
 repeatmedicin <- rbind(settasas9, settasas10)
 
@@ -149,7 +150,7 @@ repeatmedicin$cv.tasa <- 100*repeatmedicin$sd.tasa/repeatmedicin$promedio.tasa
 
 repeatmedicindef <- cbind(repeatmedicin[,1:21], repeatmedicin$promedio.tasa, repeatmedicin$sd.tasa, repeatmedicin$cv.tasa, repeatmedicin[,22:55])
 colnames(repeatmedicindef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
-write.xlsx(repeatmedicindef, file = "Repetidos medicina.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(repeatmedicindef, file = "repetidos_medicina.xlsx", sheetName = "Tasas y conteos")
 
 colnames(propordef)[1:4] <- c("Código", "Municipio", "Departamento", "Municipio - Departamento")
 
@@ -158,10 +159,10 @@ write.xlsx(todos, file = "todos.xlsx", sheetName = "Tasas y conteos")
 
 picos <- NULL
 for(i in 2002:2018){
-picosaño <- filter(todos, sapply(select (todos, contains (paste0(i,".tasa"))), as.numeric, 2) > 80.0 ) %>% mutate(Año = i) %>%  select("Código", "Municipio", "Departamento", "Municipio - Departamento","Tasa" = paste0(i,".tasa"), Año)
+picosaño <- filter(todos, sapply(select (todos, contains (paste0(i,".tasa"))), as.numeric, 2) > 80.0 ) %>% mutate(Año = i) %>%  select("Código", "Municipio", "Departamento", "Municipio - Departamento",Año, "Tasa" = paste0(i,".tasa"), "Conteo" = paste0(i,".conteo"),"Fuente" = paste0(i,".fuente"))
 picos <- rbind(picos, picosaño) 
 
 }
 
-write.xlsx(picos, file = "picos(tasa sobre 80).xlsx", sheetName = "Tasas y años")
+write.xlsx(picos, file = "data_generate/picos(tasa sobre 80).xlsx", sheetName = "Tasas y años")
 
