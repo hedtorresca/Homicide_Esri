@@ -150,12 +150,12 @@ repeatmedicin$cv.tasa <- 100*repeatmedicin$sd.tasa/repeatmedicin$promedio.tasa
 
 repeatmedicindef <- cbind(repeatmedicin[,1:21], repeatmedicin$promedio.tasa, repeatmedicin$sd.tasa, repeatmedicin$cv.tasa, repeatmedicin[,22:55])
 colnames(repeatmedicindef)[22:24] <- c("TASA PROMEDIO", "DESVIACIÓN ESTÁNDAR", "COEFICIENTE DE VARIACIÓN")
-write.xlsx(repeatmedicindef, file = "repetidos_medicina.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(repeatmedicindef, file = "data_generate/repetidos_medicina.xlsx", sheetName = "Tasas y conteos")
 
 colnames(propordef)[1:4] <- c("Código", "Municipio", "Departamento", "Municipio - Departamento")
 
 todos <- rbind(propordef, repeatmedicindef)
-write.xlsx(todos, file = "todos.xlsx", sheetName = "Tasas y conteos")
+write.xlsx(todos, file = "data_generate/todos.xlsx", sheetName = "Tasas y conteos")
 
 picos <- NULL
 for(i in 2002:2018){
